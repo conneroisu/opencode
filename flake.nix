@@ -8,6 +8,7 @@
   };
 
   outputs = {
+    self,
     nixpkgs,
     treefmt-nix,
     ...
@@ -28,8 +29,8 @@
       default = pkgs.buildGo124Module {
         pname = "opencode";
         version = "0.1.0";
-        src = ./.;
-        vendorHash = "";
+        src = self;
+        vendorHash = "sha256-Kcwd8deHug7BPDzmbdFqEfoArpXJb1JtBKuk+drdohM=";
         doCheck = false;
 
         ldflags = [
