@@ -40,7 +40,7 @@
 
         meta = with pkgs.lib; {
           description = "OpenCode - Terminal-based AI assistant for software development";
-          homepage = "https://github.com/conneroisu/opencode";
+          homepage = "https://github.com/opencode-ai/opencode";
           license = licenses.mit;
         };
       };
