@@ -131,6 +131,7 @@
       };
     });
 
+    # Runnable with: > nix fmt
     formatter = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
       treefmtModule = {
