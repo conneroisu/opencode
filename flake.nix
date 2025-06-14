@@ -1,12 +1,12 @@
 {
-  description = "Stereoscopic hardware project for depth mapping";
-  
+  description = "OpenCode - Terminal-based AI assistant for software development";
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
-  
+
   outputs = {
     nixpkgs,
     treefmt-nix,
@@ -29,18 +29,18 @@
         pname = "opencode";
         version = "0.1.0";
         src = ./.;
-        vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+        vendorHash = "";
         doCheck = false;
-        
-        preBuild = ''
-          go generate ./...
-        '';
-        
+
+        ldflags = [
+          "-s"
+          "-w"
+        ];
+
         meta = with pkgs.lib; {
-          description = "Stereoscopic hardware project for depth mapping";
+          description = "OpenCode - Terminal-based AI assistant for software development";
           homepage = "https://github.com/conneroisu/opencode";
           license = licenses.mit;
-          maintainers = with maintainers; [];
         };
       };
     });
@@ -51,46 +51,21 @@
       };
 
       scripts = {
-        dx = {
-          exec = ''$EDITOR "$REPO_ROOT"/flake.nix'';
-          description = "Edit flake.nix";
-        };
-        gx = {
-          exec = ''$EDITOR "$REPO_ROOT"/go.mod'';
-          description = "Edit go.mod";
-        };
-        build-go = {
-          exec = ''go build ./...'';
-          description = "Build all go packages";
-        };
-        clean = {
-          exec = ''go clean -cache -testcache -modcache'';
-          description = "Clean Project";
-        };
-        format = {
-          exec = ''
-            echo "Running gofmt..."
-            gofmt -w .
-            echo "Running golines..."
-            find . -name "*.go" -type f | xargs -I {} golines -w {}
-          '';
-          description = "Format code files";
-        };
-        generate-js = {
+        gen = {
           exec = ''go generate ./...'';
-          description = "Generate JS files";
+          description = "Run code generation";
         };
         lint = {
           exec = ''golangci-lint run'';
           description = "Run Linting Steps for go files";
         };
-        live-reload = {
-          exec = ''air'';
-          description = "Reload the application for air";
+        build = {
+          exec = ''go build -o opencode .'';
+          description = "Build the OpenCode CLI";
         };
         run = {
-          exec = ''air'';
-          description = "Run the application with air for hot reloading";
+          exec = ''go run .'';
+          description = "Run the OpenCode CLI";
         };
         tests = {
           exec = ''go test ./...'';
@@ -139,18 +114,17 @@
             graphviz
             goreleaser
             cobra-cli
-            
-            # Web development tools (mentioned in CLAUDE.md)
-            nodePackages.tailwindcss
-            bun
-            nodePackages.typescript-language-server
+
+            # CLI development tools
+            sqlite
           ]
           ++ builtins.attrValues scriptPackages;
 
         shellHook = ''
           export REPO_ROOT=$(git rev-parse --show-toplevel)
           echo "OpenCode development environment loaded"
-          echo "Run 'run' or 'air' to start the server with hot reloading"
+          echo "Run 'build' to build the CLI"
+          echo "Run 'run' to start the OpenCode CLI"
           echo "Run 'tests' to run all tests"
         '';
       };
